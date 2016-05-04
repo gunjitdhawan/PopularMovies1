@@ -9,6 +9,7 @@ import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.widget.Toast;
 
 import com.android.volley.Request;
 import com.android.volley.RequestQueue;
@@ -18,6 +19,7 @@ import com.android.volley.VolleyLog;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.google.gson.Gson;
 import com.nanodegreeandroid.popularmovies.AppConstants;
+import com.nanodegreeandroid.popularmovies.AppUtils;
 import com.nanodegreeandroid.popularmovies.R;
 import com.nanodegreeandroid.popularmovies.networking.VolleySingleton;
 import com.nanodegreeandroid.popularmovies.adapters.CustomAdapter;
@@ -49,10 +51,17 @@ public class MainActivity extends AppCompatActivity {
         setSupportActionBar(toolbar);
 
         initializeViews();
+
         sendRequestForMovies(AppConstants.POPULAR);
         }
 
     private void sendRequestForMovies(String criteria) {
+
+        if(!AppUtils.isNetworkAvailable(MainActivity.this))
+        {
+            Toast.makeText(MainActivity.this, "Please connect to internet!", Toast.LENGTH_SHORT).show();
+            return;
+        }
 
         movieDialog.show();
 

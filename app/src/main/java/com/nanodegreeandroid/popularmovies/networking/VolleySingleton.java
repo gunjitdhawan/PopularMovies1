@@ -51,4 +51,6 @@ public class VolleySingleton {
     public ImageLoader getImageLoader() {
         return imageLoader;
     }
+
+
 }
