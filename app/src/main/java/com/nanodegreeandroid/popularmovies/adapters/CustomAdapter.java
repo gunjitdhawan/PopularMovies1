@@ -28,6 +28,8 @@ public abstract class CustomAdapter extends RecyclerView.Adapter<CustomAdapter.C
                     itemHolder.getAdapterPosition(), itemHolder.getItemId());
         }
     }
+
+
     public class CustomRecycleViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener, View.OnLongClickListener {
         public CustomRecycleViewHolder(View itemView) {
             super(itemView);

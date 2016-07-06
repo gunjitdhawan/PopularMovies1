@@ -2,11 +2,14 @@ package com.nanodegreeandroid.popularmovies.views;
 
 import android.app.ProgressDialog;
 import android.os.Bundle;
-import android.support.v7.app.AppCompatActivity;
+import android.support.annotation.Nullable;
+import android.support.v4.app.Fragment;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
-import android.support.v7.widget.Toolbar;
 import android.util.Log;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -33,64 +36,71 @@ import org.json.JSONObject;
 
 import java.util.ArrayList;
 
-public class MovieDetailActivity extends AppCompatActivity {
+/**
+ * Created by gunjit on 29/06/16.
+ */
+public class MovieDetailFragment extends Fragment {
 
     Movie movie;
     ArrayList<Review> reviewList = new ArrayList<>();
     ArrayList<Trailer> trailerList = new ArrayList<>();
-    
+
     ReviewAdapter reviewAdapter;
     TrailerAdapter trailerAdapter;
-    
+
     RecyclerView reviewRecyclerView;
     RecyclerView trailerRecyclerView;
-    
+
     ProgressDialog progressDialog;
 
+    public MovieDetailFragment() {
+    }
+
+    @Nullable
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_movie_detail);
-        Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+    public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
+        View view = inflater.inflate(R.layout.activity_movie_detail, container, false);
+        Bundle bundle = this.getArguments();
+        movie = (Movie) bundle.getParcelable("movie");
 
-        movie = (Movie) getIntent().getExtras().get("movie");
+        Log.e("-----", "3");
+        Log.e("movie", new Gson().toJson(movie));
+        ((TextView)view.findViewById(R.id.detail_title)).setText(movie.title);
+        ((TextView)view.findViewById(R.id.details_release_date)).setText(movie.releaseDate);
+        ((TextView)view.findViewById(R.id.details_vote_average)).setText(movie.voteAverage+"/10");
+        ((TextView)view.findViewById(R.id.detail_synopsis)).setText(movie.plotSynopsis);
+        Picasso.with(getActivity()).load(AppConstants.BASE_IMG_URL+movie.imagePath).into((ImageView) view.findViewById(R.id.detail_poster));
 
-        ((TextView)findViewById(R.id.detail_title)).setText(movie.title);
-        ((TextView)findViewById(R.id.details_release_date)).setText(movie.releaseDate);
-        ((TextView)findViewById(R.id.details_vote_average)).setText(movie.voteAverage+"/10");
-        ((TextView)findViewById(R.id.detail_synopsis)).setText(movie.plotSynopsis);
-        Picasso.with(MovieDetailActivity.this).load(AppConstants.BASE_IMG_URL+movie.imagePath).into((ImageView) findViewById(R.id.detail_poster));
+        reviewAdapter = new ReviewAdapter(getActivity(), reviewList);
+        trailerAdapter = new TrailerAdapter(getActivity(), trailerList);
 
-        reviewAdapter = new ReviewAdapter(this, reviewList);
-        trailerAdapter = new TrailerAdapter(this, trailerList);
-        
-        reviewRecyclerView = (RecyclerView) findViewById(R.id.review_list);
-        trailerRecyclerView = (RecyclerView) findViewById(R.id.trailer_list);
+        reviewRecyclerView = (RecyclerView) view.findViewById(R.id.review_list);
+        trailerRecyclerView = (RecyclerView) view.findViewById(R.id.trailer_list);
 
-        progressDialog = new ProgressDialog(this);
+        progressDialog = new ProgressDialog(getActivity());
         progressDialog.setMessage("Please wait...");
         progressDialog.setIndeterminate(true);
         progressDialog.setCancelable(false);
         progressDialog.setCanceledOnTouchOutside(false);
 
         reviewRecyclerView.setHasFixedSize(true);
-        reviewRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        reviewRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         reviewRecyclerView.setAdapter(reviewAdapter);
 
         trailerRecyclerView.setHasFixedSize(true);
-        trailerRecyclerView.setLayoutManager(new LinearLayoutManager(this));
+        trailerRecyclerView.setLayoutManager(new LinearLayoutManager(getActivity()));
         trailerRecyclerView.setAdapter(trailerAdapter);
 
 
         setupReviews(movie.id);
         setupTrailers(movie.id);
+        return view;
     }
 
     private void setupReviews(String id)
     {
         progressDialog.show();
-        RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
+        RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         Log.d("REQUEST", AppConstants.BASE_URL+id+"/"+AppConstants.REVIEWS+"?api_key="+AppConstants.API_KEY);
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 AppConstants.BASE_URL+id+"/"+AppConstants.REVIEWS+"?api_key="+AppConstants.API_KEY, null,
@@ -131,7 +141,7 @@ public class MovieDetailActivity extends AppCompatActivity {
     private void setupTrailers(String id)
     {
         progressDialog.show();
-        RequestQueue queue = VolleySingleton.getInstance(this).getRequestQueue();
+        RequestQueue queue = VolleySingleton.getInstance(getActivity()).getRequestQueue();
         Log.d("REQUEST", AppConstants.BASE_URL+id+"/"+AppConstants.TRAILER+"?api_key="+AppConstants.API_KEY);
         final JsonObjectRequest jsonObjReq = new JsonObjectRequest(Request.Method.GET,
                 AppConstants.BASE_URL+id+"/"+AppConstants.TRAILER+"?api_key="+AppConstants.API_KEY, null,
@@ -168,5 +178,4 @@ public class MovieDetailActivity extends AppCompatActivity {
 
         queue.add(jsonObjReq);
     }
-
 }

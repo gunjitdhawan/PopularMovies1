@@ -25,8 +25,27 @@ public class Movie implements Parcelable{
     public String plotSynopsis;
 
     @SerializedName("popularity")
-
     public double popularity;
+
+    @SerializedName("id")
+    public String id;
+
+    @SerializedName("isFav")
+    public boolean isFav;
+
+    public Movie() {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        Movie movie = (Movie) o;
+        if (movie.id != null) {
+            if (movie.id.equalsIgnoreCase(id)) {
+                return true;
+            }
+        }
+        return false;
+    }
 
     @Override
     public int describeContents() {
@@ -41,6 +60,8 @@ public class Movie implements Parcelable{
         dest.writeDouble(this.voteAverage);
         dest.writeString(this.plotSynopsis);
         dest.writeDouble(this.popularity);
+        dest.writeString(this.id);
+        dest.writeByte(isFav ? (byte) 1 : (byte) 0);
     }
 
     protected Movie(Parcel in) {
@@ -50,6 +71,8 @@ public class Movie implements Parcelable{
         this.voteAverage = in.readDouble();
         this.plotSynopsis = in.readString();
         this.popularity = in.readDouble();
+        this.id = in.readString();
+        this.isFav = in.readByte() != 0;
     }
 
     public static final Creator<Movie> CREATOR = new Creator<Movie>() {
