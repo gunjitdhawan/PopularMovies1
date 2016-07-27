@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
@@ -15,15 +16,38 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
-    public int currentFlag = AppConstants.ALL;
+    public int currentFlag = AppConstants.ALL_POP;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main_layout);
+        try {
+            currentFlag = savedInstanceState.getInt("MyInt");
+        }
+        catch (NullPointerException e)
+        {
+
+        }
+        Log.e("oncreate", ""+currentFlag);
+
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        getMovies(AppConstants.POPULAR);
+
+
+        if(currentFlag == AppConstants.ALL_POP)
+        {
+            getMovies(AppConstants.POPULAR);
+        }
+        else if(currentFlag == AppConstants.ALL_RAT)
+        {
+            getMovies(AppConstants.TOP_RATED);
+        }
+        else if(currentFlag == AppConstants.ONLY_FAV)
+        {
+            getMovies(AppConstants.FAV_TAG);
+        }
+
     }
 
     private void getMovies(String type) {
@@ -61,23 +85,23 @@ public class MainActivity extends AppCompatActivity {
         int id = item.getItemId();
 
         if (id == R.id.action_sort_popularity) {
-            currentFlag = AppConstants.ALL;
+            currentFlag = AppConstants.ALL_POP;
             getMovies(AppConstants.POPULAR);
         }
         if(id == R.id.action_sort_rating)
         {
-            currentFlag = AppConstants.ALL;
+            currentFlag = AppConstants.ALL_RAT;
             getMovies(AppConstants.TOP_RATED);
         }
         if(id == R.id.action_show_fav)
         {
-            if(currentFlag == AppConstants.ALL) {
+            if(currentFlag == AppConstants.ALL_POP || currentFlag == AppConstants.ALL_RAT ) {
                 getMovies(AppConstants.FAV_TAG);
             }
             else
             {
                 getMovies(AppConstants.POPULAR);
-                currentFlag = AppConstants.ALL;
+                currentFlag = AppConstants.ALL_POP;
             }
         }
 
@@ -114,5 +138,22 @@ public class MainActivity extends AppCompatActivity {
                     .replace(R.id.fragment_container_2, movieDetailFragment)
                     .commit();
         }
+    }
+
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+
+        savedInstanceState.putInt("MyInt", currentFlag);
+        Log.e("onSaveInstanceState", ""+currentFlag);
+        super.onSaveInstanceState(savedInstanceState);
+    }
+    @Override
+    public void onRestoreInstanceState(Bundle savedInstanceState) {
+        super.onRestoreInstanceState(savedInstanceState);
+
+        currentFlag = savedInstanceState.getInt("MyInt");
+        Log.e("onRestoreInstanceState", ""+currentFlag);
+
+
     }
 }
