@@ -13,4 +13,13 @@
         android:layout_height="match_parent"
         android:id="@+id/movie_list"/>
 
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Couldn't load movies."
+        android:layout_centerInParent="true"
+        android:id="@+id/error_text"
+        android:visibility="gone"/>
+
+
 </RelativeLayout>

@@ -8,6 +8,7 @@ import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 
+import com.google.gson.Gson;
 import com.nanodegreeandroid.popularmovies.AppConstants;
 import com.nanodegreeandroid.popularmovies.R;
 import com.nanodegreeandroid.popularmovies.models.Movie;
@@ -17,6 +18,7 @@ import java.util.ArrayList;
 public class MainActivity extends AppCompatActivity {
 
     public int currentFlag = AppConstants.ALL_POP;
+    public Movie selectedMovie = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -58,6 +60,7 @@ public class MainActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction()
                 .replace(R.id.fragment_container_1, movieListFragment)
                 .commit();
+
     }
 
     @Override
@@ -118,11 +121,16 @@ public class MainActivity extends AppCompatActivity {
             getSupportFragmentManager().beginTransaction()
                     .replace(R.id.fragment_container_2, movieDetailFragment)
                     .commit();
+            Log.e("onMovieListLoaded", new Gson().toJson(selectedMovie));
+            if(selectedMovie!=null) {
+                onMovieClicked(selectedMovie);
+            }
         }
 
     }
 
     public void onMovieClicked(Movie movie) {
+        selectedMovie = movie;
         if(findViewById(R.id.fragment_container_2)==null) {
             Intent i = new Intent(MainActivity.this, MovieDetailActivity.class);
             i.putExtra("movie", movie);
@@ -144,6 +152,7 @@ public class MainActivity extends AppCompatActivity {
     public void onSaveInstanceState(Bundle savedInstanceState) {
 
         savedInstanceState.putInt("MyInt", currentFlag);
+        savedInstanceState.putParcelable("movie", selectedMovie);
         Log.e("onSaveInstanceState", ""+currentFlag);
         super.onSaveInstanceState(savedInstanceState);
     }
@@ -152,6 +161,7 @@ public class MainActivity extends AppCompatActivity {
         super.onRestoreInstanceState(savedInstanceState);
 
         currentFlag = savedInstanceState.getInt("MyInt");
+        selectedMovie = savedInstanceState.getParcelable("movie");
         Log.e("onRestoreInstanceState", ""+currentFlag);
 
 

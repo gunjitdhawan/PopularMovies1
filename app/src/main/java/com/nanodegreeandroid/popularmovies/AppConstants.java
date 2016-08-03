@@ -8,7 +8,7 @@ public class AppConstants {
     public static final int ALL_RAT = 102;
     public static final int ONLY_FAV = 101;
     public static String BASE_URL="http://api.themoviedb.org/3/movie/";
-    public static String API_KEY = "xxx";
+    public static String API_KEY = "fa4b3937f19398708e33027039a80251";
     public static String BASE_IMG_URL="http://image.tmdb.org/t/p/w185/";
     public static String POPULAR = "popular";
     public static String TOP_RATED = "top_rated";

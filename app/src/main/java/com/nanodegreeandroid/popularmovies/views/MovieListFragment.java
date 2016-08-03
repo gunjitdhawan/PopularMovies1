@@ -10,6 +10,7 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.android.volley.Request;
@@ -43,6 +44,8 @@ public class MovieListFragment extends Fragment {
     ProgressDialog movieDialog;
     ArrayList<Movie> movieList = new ArrayList<>();
     MainActivity mainActivity;
+    TextView errorMsgView;
+    Movie selectedMovie;
 
 
     public MovieListFragment() {
@@ -57,6 +60,7 @@ public class MovieListFragment extends Fragment {
 
         mainActivity = ((MainActivity) getActivity());
         String type  = this.getArguments().getString("type");
+        selectedMovie = this.getArguments().getParcelable("movie");
         sendRequestForMovies(type);
 
         return view;
@@ -67,6 +71,7 @@ public class MovieListFragment extends Fragment {
         if(!AppUtils.isNetworkAvailable(getActivity()))
         {
             Toast.makeText(getActivity(), "Please connect to internet!", Toast.LENGTH_SHORT).show();
+            errorMsgView.setVisibility(View.VISIBLE);
             return;
         }
 
@@ -109,6 +114,7 @@ public class MovieListFragment extends Fragment {
                                 movieGridAdapter.notifyDataSetChanged();
                             }
                             mainActivity.onMovieListLoaded(movieList);
+
                             movieDialog.dismiss();
                         } catch (JSONException e) {
                             e.printStackTrace();
@@ -132,6 +138,7 @@ public class MovieListFragment extends Fragment {
 
     private void initializeViews(View view) {
 
+        errorMsgView = (TextView) view.findViewById(R.id.error_text);
         movieDialog = new ProgressDialog(getActivity());
         movieDialog.setMessage("Please wait...");
         movieDialog.setIndeterminate(true);
